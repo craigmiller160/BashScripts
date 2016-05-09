@@ -8,14 +8,13 @@ fi
 
 IFS=$'\n'
 
-files=$(ls -a | grep $1 | awk '{print "\"" $0 "\"" }')
+files=($(ls -a | grep $1)) # | awk '{print "\"" $0 "\"" }')
 
-## TODO ensure directory support
+## TODO include variable for directory
+## TODO indicate a directory in the output
 
 echo "This script will delete the following files:"
-for f in $files; do
-	echo "  $f"
-done
+printf '  %q\n' "${files[@]}"
 
 valid=false
 
@@ -25,8 +24,7 @@ while ! $valid ; do
 		y)
 			valid=true
 			echo "Deleting, please wait"
-			echo $files
-			rm ${files[@]}
+			rm -rf ${files[@]}
 		;;
 		n)
 			valid=true
