@@ -26,7 +26,7 @@ while ! $valid ; do
 			valid=true
 			echo "Deleting, please wait"
 			echo $files
-			rm ${files}
+			rm ${files[@]}
 		;;
 		n)
 			valid=true
