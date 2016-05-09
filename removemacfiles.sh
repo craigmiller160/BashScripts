@@ -1,0 +1,1 @@
+find $1 -name ".DS_Store" -exec rm -rf {} \;
