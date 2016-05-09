@@ -8,7 +8,7 @@ fi
 
 IFS=$'\n'
 
-files=($(ls -a | grep $1)) # | awk '{print "\"" $0 "\"" }')
+files=($(ls -ap | grep $1)) # | awk '{print "\"" $0 "\"" }')
 
 ## TODO include variable for directory
 ## TODO indicate a directory in the output
