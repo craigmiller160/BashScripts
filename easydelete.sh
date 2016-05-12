@@ -10,8 +10,9 @@ IFS=$'\n'
 
 files=($(ls -ap | grep $1)) # | awk '{print "\"" $0 "\"" }')
 
-## TODO include variable for directory
+## TODO make directory removal optional
 ## TODO indicate a directory in the output
+## TODO make regex vs literal name optional
 
 echo "This script will delete the following files:"
 printf '  %q\n' "${files[@]}"
