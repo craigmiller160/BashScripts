@@ -9,8 +9,6 @@ TEMPLATE="$DEV_ROOT/.template"
 LOGS="$DEV_ROOT/.logs"
 LOG_FILE="$LOGS/symlink.log"
 
-### TODO ensure that new files can be created by IntelliJ in the .idea folder via symlink
-### TODO figure out how to grab new files in .idea folder into .project directory
 ### TODO after doing all the symlinking, commit changes in Main and, if possible, do the reset OR DON'T, BECAUSE THE FILES WON'T BE BEING TRACKED ANYWAY
 
 

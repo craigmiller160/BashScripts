@@ -11,6 +11,7 @@ LOG_FILE="$LOGS/create.log"
 
 ### TODO ensure on master branch in Main directory before beginning process
 ### TODO be able to handle it if the local branch or directory already exists
+### TODO update trunk before creating the new branch
 
 ### TODO revise this section that produces an error if not enough arguments
 if [ $# -lt 1 ]; then
