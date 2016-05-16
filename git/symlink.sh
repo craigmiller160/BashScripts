@@ -11,6 +11,7 @@ LOG_FILE="$LOGS/symlink.log"
 
 ### TODO ensure that new files can be created by IntelliJ in the .idea folder via symlink
 ### TODO figure out how to grab new files in .idea folder into .project directory
+### TODO after doing all the symlinking, commit changes in Main and, if possible, do the reset OR DON'T, BECAUSE THE FILES WON'T BE BEING TRACKED ANYWAY
 
 
 ### TODO put this logs creating code in a better place
@@ -54,7 +55,7 @@ fi
 if [ ! -h "$DEV_MAIN/.idea" ]; then
 	echo "Moving .idea directory to .project and symlinking" | tee /dev/fd/3
 	echo "   Moving .idea directory to .project directory"
-	mv "$DEV_MAIN/.idea" "$PROJECT"
+	mv -f "$DEV_MAIN/.idea" "$PROJECT/.idea"
 	echo "   Symlinking reloacted .idea directory back to Main project"
 	ln -s "$PROJECT/.idea" "$DEV_MAIN/.idea"
 	echo "   Symlinking relocated .idea directory to .template"
