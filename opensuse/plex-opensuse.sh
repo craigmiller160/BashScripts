@@ -37,10 +37,10 @@ BACKUP_PLEX_PATH="$BACKUP_PATH/Plex Media Server"
 # sudo service plexmediaserver stop
 
 # Copy Plex MetaData backup
-echo "Copying Plex Media Server MetaData Backup. This may take some time."
-sudo rm -rf "$PLEX_LIB_DIR/Plex Media Server"
-sudo rsync -a --info=progress2 "$BACKUP_PLEX_PATH" "$PLEX_LIB_DIR"
-sudo chown -R plex:plex "$PLEX_LIB_DIR/Plex Media Server"
+# echo "Copying Plex Media Server MetaData Backup. This may take some time."
+# sudo rm -rf "$PLEX_LIB_DIR/Plex Media Server"
+# sudo rsync -a --info=progress2 "$BACKUP_PLEX_PATH" "$PLEX_LIB_DIR"
+# sudo chown -R plex:plex "$PLEX_LIB_DIR/Plex Media Server"
 
 # Mount MediaDrive so that plex can access it
 # echo "Configuring mount for Media Drive, please wait."
@@ -72,7 +72,7 @@ sudo chown -R plex:plex "$PLEX_LIB_DIR/Plex Media Server"
 # sudo echo "# space separated list of allowed UDP broadcast ports" | sudo tee --append plexmedia-server
 # 
 # # Allow Plex through the Yast Firewall
-# sudo yast firewall services add service=service:plexmedia-server zone=INT
+sudo yast firewall services add service=service:plexmedia-server zone=INT
 # 
 # # Restart Plex service
 # sudo service plexmediaserver start
