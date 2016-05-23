@@ -2,7 +2,7 @@
 # A script to practice setting up the project files to be symlinked
 
 # Core variables that define the locations of all directories
-DEV_ROOT="/Users/craigmiller/NewTestDev"
+DEV_ROOT="/Users/craigmiller/PilotFishDev"
 DEV_MAIN="$DEV_ROOT/Main"
 PROJECT="$DEV_ROOT/.project"
 TEMPLATE="$DEV_ROOT/.template"
