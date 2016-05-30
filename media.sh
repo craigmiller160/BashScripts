@@ -109,6 +109,10 @@ function move_media {
         
         ### TODO figure out how to make this line work for both tv show and movie
         mv "$file" "$show"/$season
+
+	echo "Refreshing Plex Media Server"
+	curl http://localhost:32400/library/sections/2/refresh
+
         
     else
         ### TODO finish the movie section
@@ -233,15 +237,18 @@ function tv {
         esac
     done
     
-    echo $series_name
-    echo $season_num
-    echo $ep_num
-    
     path="$TV_PATH/$series_name/Season*$season_num"
 
 }
 
 # SCRIPT STARTS HERE
+
+# Ensure plex lib path variable exists
+varExists=$LD_LIBRARY_PATH
+if [ $varExists = "" ]; then
+    echo "export LD_LIBRARY_PATH=/usr/lib/plexmediaserver" >> $HOME/.bash_profile
+    source .bash_profile
+fi
 
 MOVIE_TYPE="Movie"
 TV_TYPE="TV"
@@ -288,9 +295,11 @@ export MOVIE_TYPE="Movie"
 export TV_TYPE="TV"
 find . \( -name '*.mkv' -o -name '*.mp4' \) -exec bash -c 'move_media {} "$path" $type' \;
 
-
-
-
+echo "Refreshing Plex Media Center"
+# Refresh TV Shows
+wget -q0- http://localhost:32400/library/sections/2/refresh &>/dev/null
+# Refresh movies
+wget -q0- http://localhost:32400/library/sections/1/refresh &>/dev/null
 
 
 
