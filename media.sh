@@ -8,12 +8,112 @@ path=""
 
 function move_media {
 
+    # Assign variables
     file="$1"
     path="$2"
+    type="$3"
     
-    echo "Running"
-    echo $file
-    echo $path
+    # If it's a TV Show, execute this part
+    if [ $type = $TV_TYPE ]; then
+        # Test if the show's directory exists
+        show=$(dirname "$path")
+        if [ ! -d "$show" ]; then
+            accept=false
+            while ! $accept ; do
+                read -p "TV Show named $(basename "$show") doesn't exist, create it? (y/n): "
+                case $REPLY in
+                    y|Y)
+                        accept=true
+                        mkdir -p "$show"
+                    ;;
+                    n|N)
+                        accept=true
+                        ### TODO ensure that this exits even if the find is doing multiple executions
+                        echo "Unable to move media, exiting script"
+                        exit 1
+                    ;;
+                    *)
+                        echo "Invalid input! Please try again"
+                    ;;
+                esac
+            done
+        fi
+        
+        # Test if the season directory exists
+        season=$(basename "$path")
+        if [ ! -d "$show"/$season ]; then
+            accept=false
+            season="${season/\*/ }"
+            while ! $accept ; do
+                read -p "TV Show $(basename "$show") doesn't have $season, create it? (y/n): "
+                case $REPLY in
+                    y|Y)
+                        accept=true
+                        mkdir -p "$show/$season"
+                    ;;
+                    n|N)
+                        accept=true
+                        ### TODO ensure that this exits even if the find is doing multiple executions
+                        echo "Unable to move media, exiting script"
+                        exit 1
+                    ;;
+                    *)
+                        echo "Invalid input! Please try again"
+                    ;;
+                esac
+            done
+        fi
+        
+        ### TODO include a yes-to-all here
+        season=$(basename "$path")
+        accept=false
+        while ! $accept ; do
+            echo "File destination is:" "$show"/$season
+            read -p "Do you want to continue? (y/n)"
+            case $REPLY in
+                y|Y)
+                    accept=true
+                ;;
+                n|N)
+                    accept=true
+                    ### TODO ensure that this exits even if the find is doing multiple executions
+                    echo "Unable to move media, exiting script"
+                    exit 1
+                ;;
+                *)
+                    echo "Invalid input! Please try again"
+                ;;
+            esac
+        done
+        
+        ### TODO include a yes-to-all here
+        accept=false
+        while ! $accept ; do
+            echo "File to be moved is:" "$file"
+            read -p "Do you want to continue? (y/n)"
+            case $REPLY in
+                y|Y)
+                    accept=true
+                ;;
+                n|N)
+                    accept=true
+                    ### TODO ensure that this exits even if the find is doing multiple executions
+                    echo "Unable to move media, exiting script"
+                    exit 1
+                ;;
+                *)
+                    echo "Invalid input! Please try again"
+                ;;
+            esac
+        done
+        
+        ### TODO figure out how to make this line work for both tv show and movie
+        mv "$file" "$show"/$season
+        
+    else
+        ### TODO finish the movie section
+        echo "This will be for the movies"
+    fi
 
 }
 
@@ -183,7 +283,10 @@ IFS=$'\n'
 
 export -f move_media
 export path=$path
-find . \( -name '*.mkv' -o -name '*.mp4' \) -exec bash -c 'move_media {} $path' \;
+export type=$type
+export MOVIE_TYPE="Movie"
+export TV_TYPE="TV"
+find . \( -name '*.mkv' -o -name '*.mp4' \) -exec bash -c 'move_media {} "$path" $type' \;
 
 
 
