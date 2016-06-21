@@ -3,7 +3,7 @@
 
 IFS=$'\n'
 
-files=($(svn status | egrep "^\? *$1" | awk -F' ' '{$1=""; print $0 }' OFS=''))
+files=($(svn status | egrep "^\? *$1" | awk -F' ' '{$1=""; print $0 }' | sed -e 's/^[[:space:]]*//'))
 
 
 echo "The following files and directories will be added to SVN:"
@@ -19,7 +19,12 @@ while ! $valid; do
 		y)
 			valid=true
 			echo "Adding files"
-			svn add ${files[@]// /}
+			#svn add ${files[@]/ /\ }
+			for f in ${files[@]}; do
+				# f2=$(echo "$f" | sed -e 's/^[[:space:]]*//')
+				echo "$f"
+				svn add "$f"
+			done
 		;;
 		n)
 			valid=true
