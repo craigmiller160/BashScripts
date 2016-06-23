@@ -17,6 +17,7 @@ EI_CONSOLE="eiConsole.buildRelease"
 EIP_WAR="eip.war.buildAll"
 EIC_BUNDLE="eicBundle.buildRelease"
 CLEAN=false
+START_DIR=$(pwd)
 
 echo "Build PilotFish Application"
 echo ""
@@ -39,27 +40,49 @@ case "$REPLY" in
 	;;
 esac
 
+setname=false
+name=""
 if ! $CLEAN ; then
-	ant -f resources/build/build_new_main.xml "$ANT_TARGET" -Dinstall4J.jarLoc="$install4J_jarLoc"
-	echo "Copying application components to output directory, please wait..."
-	case "$ANT_TARGET" in
-		"$EI_CONSOLE")
-			rm -rf "$HOME/xcs-app/eiConsole" 1>/dev/null 2>/dev/null
-			mkdir -p "$HOME/xcs-app/eiConsole"
-			cp -R ./resources/releases/eiConsole/build/* "$HOME/xcs-app/eiConsole"
-		;;
-		"$EIP_WAR")
-			rm -rf "$HOME/xcs-app/eipWar" 1>/dev/null 2>/dev/null
-			mkdir -p "$HOME/xcs-app/eipWar"
-			cp -R ./dist/* "$HOME/xcs-app/eipWar"
-		;;
-		"$EIC_BUNDLE")
-			rm -rf "$HOME/xcs-app/eicBundle" 1>/dev/null 2>/dev/null
-			mkdir -p "$HOME/xcs-app/eicBundle"
-			cp -R ./resources/releases/eiPlatform-Windows/build/* "$HOME/xcs-app/eicBundle"
+	echo "Do you want to give this set of installers a name? This will be appended to the output directory."
+	read -p "Set name? (y/n): "
+	case $REPLY in
+		y|Y) setname=true ;;
+		n|N) setname=false ;;
+		*)
+			echo "Error! Invalid input. Please try again"
+			exit 1
 		;;
 	esac
-	echo "Build complete. Application is located at $HOME/xcs-app"
+
+	if $setname ; then
+		read -p "Name: "
+		name="$REPLY"
+	fi
+
+	ant -f resources/build/build_new_main.xml "$ANT_TARGET" -Dinstall4J.jarLoc="$install4J_jarLoc"
+	echo "Copying application components to output directory, please wait..."
+	apppath=""
+	case "$ANT_TARGET" in
+		"$EI_CONSOLE")
+			rm -rf $HOME/xcs-app/eiConsole* 1>/dev/null 2>/dev/null
+			apppath="$HOME/xcs-app/eiConsole-$name"
+			mkdir -p "$apppath"
+			cp -R ./resources/releases/eiConsole/build/* "$apppath"
+		;;
+		"$EIP_WAR")
+			rm -rf $HOME/xcs-app/eipWar* 1>/dev/null 2>/dev/null
+			apppath="$HOME/xcs-app/eipWar-$name"
+			mkdir -p "$apppath"
+			cp -R ./dist/* "$apppath"
+		;;
+		"$EIC_BUNDLE")
+			rm -rf $HOME/xcs-app/eicBundle* 1>/dev/null 2>/dev/null
+			apppath="$HOME/xcs-app/eicBundle-$name"
+			mkdir -p "$apppath"
+			cp -R ./resources/releases/eiPlatform-Windows/build/* "$apppath"
+		;;
+	esac
+	echo "Build complete. Application is located at $apppath"
 
 	echo ""
 	echo "Do you want to clean your project directory of all build files?"
@@ -79,14 +102,22 @@ if $CLEAN ; then
 	echo "Any uncommitted changes will likely be lost as well"
 	read -p "Proceed? (y/n): "
 	case $REPLY in
-		y) CLEAN=true ;;
-		n) CLEAN=false ;;
+		y|Y) CLEAN=true ;;
+		n|N) CLEAN=false ;;
 		*)
 			echo "Error! Invalid input"
 		;;
 	esac
 	if $CLEAN ; then
 		echo "Cleaning, please wait..."
+		cd "$START_DIR"
+		rm -rf classes 1>/dev/null 2>/dev/null
+		rm -rf eip-staging 1>/dev/null 2>/dev/null
+		rm -rf eip-staging-ext 1>/dev/null 2>/dev/null
+		rm -rf eip-staging-modules 1>/dev/null 2>/dev/null
+		rm -rf dist 1>/dev/null 2>/dev/null
+		rm -rf resources/releases/eiConsole/build/* 1>/dev/null 2>/dev/null
+		rm -rf resources/releases/eiConsole/staging/* 1>/dev/null 2>/dev/null
 		rm -rf resources/releases/eiPlatform-Windows/build/ 1>/dev/null 2>/dev/null
 		rm resources/releases/eiPlatform-Windows/staging/api_access_roles.properties 1>/dev/null 2>/dev/null
 		rm resources/releases/eiPlatform-Windows/staging/module_access_roles.properties 1>/dev/null 2>/dev/null
