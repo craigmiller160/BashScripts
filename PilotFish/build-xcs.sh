@@ -88,8 +88,8 @@ if ! $CLEAN ; then
 	echo "Do you want to clean your project directory of all build files?"
 	read -p "Clean? (y/n): "
 	case $REPLY in
-		y) CLEAN=true ;;
-		n) CLEAN=false ;;
+		y|Y) CLEAN=true ;;
+		n|N) CLEAN=false ;;
 		*)
 			echo "Error! Invalid input"
 		;;
