@@ -22,7 +22,7 @@ START_DIR=$(pwd)
 echo "Build PilotFish Application"
 echo ""
 echo "Select the type of build to run:"
-echo "  1) eiConsole"
+echo "  1) eiConsole (installer)"
 echo "  2) eiPlatform (war)"
 echo "  3) eiConsole + eiPlatform (installer)"
 echo "  4) Clean (remove files created by installation)"
@@ -58,6 +58,8 @@ if ! $CLEAN ; then
 		read -p "Name: "
 		name="$REPLY"
 	fi
+
+	### TODO ensure that there isn't a trailing - when no name is set
 
 	ant -f resources/build/build_new_main.xml "$ANT_TARGET" -Dinstall4J.jarLoc="$install4J_jarLoc"
 	echo "Copying application components to output directory, please wait..."
@@ -99,7 +101,6 @@ fi
 if $CLEAN ; then
 	echo ""
 	echo "This will clean your project directory of all build files"
-	echo "Any uncommitted changes will likely be lost as well"
 	read -p "Proceed? (y/n): "
 	case $REPLY in
 		y|Y) CLEAN=true ;;
@@ -111,6 +112,8 @@ if $CLEAN ; then
 	if $CLEAN ; then
 		echo "Cleaning, please wait..."
 		cd "$START_DIR"
+
+		# All these folders and/or contents
 		rm -rf classes 1>/dev/null 2>/dev/null
 		rm -rf eip-staging 1>/dev/null 2>/dev/null
 		rm -rf eip-staging-ext 1>/dev/null 2>/dev/null
@@ -119,13 +122,14 @@ if $CLEAN ; then
 		rm -rf resources/releases/eiConsole/build/* 1>/dev/null 2>/dev/null
 		rm -rf resources/releases/eiConsole/staging/* 1>/dev/null 2>/dev/null
 		rm -rf resources/releases/eiPlatform-Windows/build/ 1>/dev/null 2>/dev/null
+
+		# Remove specific files from the eiPlatform-windows/staging directory, leaving the contents that should remain
 		rm resources/releases/eiPlatform-Windows/staging/api_access_roles.properties 1>/dev/null 2>/dev/null
 		rm resources/releases/eiPlatform-Windows/staging/module_access_roles.properties 1>/dev/null 2>/dev/null
 		rm -rf resources/releases/eiPlatform-Windows/staging/server/ 1>/dev/null 2>/dev/null
 		rm -rf resources/releases/eiPlatform-Windows/temp/ 1>/dev/null 2>/dev/null
-		rm -rf resources/releases/eip-lite-server/build/ 1>/dev/null 2>/dev/null
-		rm -rf resources/releases/eip-lite-server/staging/docs/ 1>/dev/null 2>/dev/null
-		rm -rf resources/releases/eip-lite-server/staging/server/ 1>/dev/null 2>/dev/null
+		rm -rf resources/releases/eiPlatform-Windows/staging/runtime/ 1>/dev/null 2>/dev/null
+		rm -rf resources/releases/eiPlatform-Windows/staging/samples/ 1>/dev/null 2>/dev/null
 		rm -rf resources/releases/eiPlatform-Windows/staging/api/ 1>/dev/null 2>/dev/null
 		rm -rf resources/releases/eiPlatform-Windows/staging/dashboardui/ 1>/dev/null 2>/dev/null
 		rm -rf resources/releases/eiPlatform-Windows/staging/dashboardui_cleaned/ 1>/dev/null 2>/dev/null
@@ -135,8 +139,16 @@ if $CLEAN ; then
 		rm resources/releases/eiPlatform-Windows/staging/eassettings.txt 1>/dev/null 2>/dev/null
 		rm resources/releases/eiPlatform-Windows/staging/license-notices.txt 1>/dev/null 2>/dev/null
 		rm resources/releases/eiPlatform-Windows/staging/license.txt 1>/dev/null 2>/dev/null
-		rm -rf resources/releases/eiPlatform-Windows/staging/runtime/ 1>/dev/null 2>/dev/null
-		rm -rf resources/releases/eiPlatform-Windows/staging/samples/ 1>/dev/null 2>/dev/null
-		git checkout . 1>/dev/null 2>/dev/null
+		rm resources/releases/eiPlatform-Windows/staging/eipRegressionRemote-*.jar 1>/dev/null 2>/dev/null
+
+		# Remove eip-lite files & directories
+		rm -rf resources/releases/eip-lite-server/build/ 1>/dev/null 2>/dev/null
+		rm -rf resources/releases/eip-lite-server/staging/docs/ 1>/dev/null 2>/dev/null
+		rm -rf resources/releases/eip-lite-server/staging/server/ 1>/dev/null 2>/dev/null
+
+		# Restore specific files from git that have been changed during this process
+		git checkout rman/com/pilotfish/eip/rest/doc/resourcedoc.xml 1>/dev/null 2>/dev/null
+		git checkout resources/releases/eiPlatform-Windows/staging/eipServer.conf 1>/dev/null 2>/dev/null
+		git checkout resources/releases/eiPlatform-Windows/staging/logConfig.xml 1>/dev/null 2>/dev/null
 	fi
 fi
