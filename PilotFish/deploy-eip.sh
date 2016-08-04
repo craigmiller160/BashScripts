@@ -76,11 +76,13 @@ while $run ; do
 		USER_GROUP="$user:$group"
 	fi
 
+	echo ""
 	echo "Current deployment settings:"
 	echo "1) Path to eipServer.conf: $EIP_SERVER_PATH"
 	echo "2) Path to eip.log: $EIP_LOG_PATH"
 	echo "3) Path to Tomcat webapps: $TOMCAT"
 	echo "4) User/Group assigned to Tomcat: $USER_GROUP"
+	echo ""
 	read -p "Do you want to use these settings? (y/n): "
 	case "$REPLY" in
 		y|Y) run=false ;;
@@ -144,7 +146,4 @@ case "$REPLY" in
 	*) echo "Invalid input! You can start Tomcat manually at any time" ;;
 esac
 
-# THIS IS THE MAGIC FORMULA TO DO WEB.XML REPLACEMENTS PROPERLY
-# cat web.xml | sed 's/\$server.logFile\$/myLogFile/g' | sed 's/\/\$server.configFile\$/myServerConfg/g' > web2.xml
-# ${eip.war.home}/logs/eip.log
-# /eipServer.conf
+

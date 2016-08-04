@@ -144,3 +144,15 @@ if $CLEAN ; then
 	git checkout resources/releases/eiPlatform-Windows/staging/eipServer.conf 1>/dev/null 2>/dev/null
 	git checkout resources/releases/eiPlatform-Windows/staging/logConfig.xml 1>/dev/null 2>/dev/null
 fi
+
+# Option to run deploy script for eip.war
+if [ "$ANT_TARGET" == "$EIP_WAR" ]; then
+	read -p "Do you want to deploy the eip.war to Tomcat? (y/n): "
+	case $REPLY in
+		y|Y) 
+			echo "Running deploy-eip script"
+			cd "$apppath"
+			sudo deploy-eip.sh 
+		;;
+	esac
+fi
