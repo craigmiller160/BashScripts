@@ -17,6 +17,7 @@
 
 # sudo zypper rm icedtea-web -y
 
+
 sudo update-alternatives --install /usr/bin/java java /usr/java/latest/bin/java 1551
 sudo update-alternatives --install /usr/bin/javadoc javadoc /usr/java/latest/bin/javadoc 1551
 sudo update-alternatives --install /usr/bin/jar jar /usr/java/latest/bin/jar 1551
