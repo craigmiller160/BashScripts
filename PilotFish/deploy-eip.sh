@@ -1,76 +1,150 @@
 #!/bin/bash
 # Deploy eip.war to tomcat
-# To make this script work, simply supply your own values for the platform dependent variables
 
-### PLATFORM DEPENDENT VARIABLES #######################
-# The path to the Tomcat webapps directory
-TOMCAT=/var/lib/tomcat6/webapps
-# The path to the pre-built web.xml file, with the parameter values for the log file and eipServer.conf file locations already set
-WEB_XML_PATH=/home/craigmiller/Documents/web.xml
-########################################################
+SETTINGS="$HOME/.deploy-eip.conf"
 
 EIP_WAR="eip.war"
 EIP_DASHBOARD_WAR="eip.dashboard.war"
 
 eip_name=""
 
-# The main function to execute the script
-function main {
+# Require superuser permissions to run the script
+if [ $UID != 0 ]; then
+	echo "This script must be run with superuser permissions."
+	exit 1
+fi
 
-	# Prompt to see which war file is being deployed
-	read -p "Which eip.war do you want to deploy? eip.war (1) or eip.dashboard.war (2): "
-	case $REPLY in
-		1) eip_name="$EIP_WAR" ;;
-		2) eip_name="$EIP_DASHBOARD_WAR" ;;
-		*) echo "Error! Invalid input! Please try again."
-		   exit 1 ;;
+# Prompt to see which war file is being deployed
+read -p "Which eip.war do you want to deploy? eip.war (1) or eip.dashboard.war (2): "
+case $REPLY in
+	1) eip_name="$EIP_WAR" ;;
+	2) eip_name="$EIP_DASHBOARD_WAR" ;;
+	*) echo "Error! Invalid input! Please try again."
+	   exit 1 
+	;;
+esac
+
+# Test if that war file exists in the current directory
+if [ ! -f "./$eip_name" ]; then
+	echo "Error! No file named $eip_name in the current directory"
+	exit 1
+fi
+
+EIP_SERVER_PATH=""
+EIP_LOG_PATH=""
+TOMCAT=""
+USER_GROUP=""
+
+if [ -f "$SETTINGS" ]; then
+	source "$SETTINGS"
+fi
+
+run=true
+while $run ; do
+	if [ "$EIP_SERVER_PATH" == "" ]; then
+		read -p "Please provide path to eipServer.conf: "
+		EIP_SERVER_PATH="$REPLY"
+	fi
+
+	# Ensure that the variable ends with the filename
+	if [[ "$EIP_SERVER_PATH" != */eipServer.conf ]]; then
+		EIP_SERVER_PATH="$(echo "$EIP_SERVER_PATH" | sed -e 's/\/$//g')"
+		EIP_SERVER_PATH+=/eipServer.conf
+	fi
+
+	if [ "$EIP_LOG_PATH" == "" ]; then
+		read -p "Please provide path to eip.log: "
+		EIP_LOG_PATH="$REPLY"
+	fi
+
+	# Ensure that the variable ends with the filename
+	if [[ "$EIP_LOG_PATH" != */eip.log ]]; then
+		EIP_LOG_PATH="$(echo "$EIP_LOG_PATH" | sed -e 's/\/$//g')"
+		EIP_LOG_PATH+=/eip.log
+	fi
+
+	if [ "$TOMCAT" == "" ]; then
+		read -p "Please provide path to Tomcat webapps directory: "
+		TOMCAT="$REPLY"
+	fi
+
+	if [ "$USER_GROUP" == "" ]; then
+		read -p "Please provide the linux username assigned to Tomcat: "
+		user="$REPLY"
+		read -p "Please provide the linux groupname assigned to Tomcat: "
+		group="$REPLY"
+		USER_GROUP="$user:$group"
+	fi
+
+	echo "Current deployment settings:"
+	echo "1) Path to eipServer.conf: $EIP_SERVER_PATH"
+	echo "2) Path to eip.log: $EIP_LOG_PATH"
+	echo "3) Path to Tomcat webapps: $TOMCAT"
+	echo "4) User/Group assigned to Tomcat: $USER_GROUP"
+	read -p "Do you want to use these settings? (y/n): "
+	case "$REPLY" in
+		y|Y) run=false ;;
+		n|N) 
+			run=true
+			read -p "Enter the number of the setting you wish to change: "
+			case "$REPLY" in
+				1) EIP_SERVER_PATH="" ;;
+				2) EIP_LOG_PATH="" ;;
+				3) TOMCAT="" ;;
+				4) USER_GROUP="" ;;
+				*) echo "Invalid entry, please try again" ;;
+			esac
+		;;
+		*) echo "Invalid input, please try again." ;;
 	esac
 
-	# Test if that war file exists in the current directory
-	if [ ! -f "./$eip_name" ]; then
-		echo "Error! No file named $eip_name in the current directory"
-		exit 1
-	fi
+done
 
-	# The rest of this is the process of deploying the file
-	echo "Stopping tomcat6 service"
-	sudo service tomcat6 stop
+echo "Saving settings..."
+echo "# deploy-eip.sh script configuration settings" > "$SETTINGS"
+echo "EIP_SERVER_PATH=$EIP_SERVER_PATH" >> "$SETTINGS"
+echo "EIP_LOG_PATH=$EIP_LOG_PATH" >> "$SETTINGS"
+echo "TOMCAT=$TOMCAT" >> "$SETTINGS"
+echo "USER_GROUP=$USER_GROUP" >> "$SETTINGS"
 
-	if [ -f "$TOMCAT/$eip_name" ]; then
-		echo "Deleting existing $eip_name file"
-		sudo rm "$TOMCAT/$eip_name"
-	fi 
+# The rest of this is the process of deploying the file
+echo "Stopping tomcat6 service"
+catalina.sh stop 2>/dev/null
 
-	if [ -d "$TOMCAT/${eip_name/.war/}" ]; then
-		echo "Deleting existing ${eip_name/.war/} directory"
-		sudo rm -rf "$TOMCAT/${eip_name/.war/}"
-	fi
+echo "Deleting any existing eip war"
+rm -rf $TOMCAT/eip*
 
-	echo "Copying $eip_name to $TOMCAT"
-	sudo cp "$eip_name" "$TOMCAT"
+echo "Copying $eip_name to $TOMCAT"
+cp "$eip_name" "$TOMCAT"
 
-	echo "Unpacking $eip_name"
-	sudo mkdir "$TOMCAT/${eip_name/.war/}"
-	sudo cp "$TOMCAT/$eip_name" "$TOMCAT/${eip_name/.war/}"
-	cd "$TOMCAT/${eip_name/.war/}"
-	sudo jar xf "$eip_name"
-	sudo rm "$eip_name"
+echo "Unpacking $eip_name"
+mkdir "$TOMCAT/${eip_name/.war/}"
+cp "$TOMCAT/$eip_name" "$TOMCAT/${eip_name/.war/}"
+cd "$TOMCAT/${eip_name/.war/}"
+jar xf "$eip_name"
+rm "$eip_name"
 
-	echo "Replacing web.xml with updated version"
-	sudo rm "WEB-INF/web.xml"
-	sudo cp "$WEB_XML_PATH" "WEB-INF"
+echo "Updating web.xml values"
 
-	cd "$TOMCAT"
-	sudo chown -R tomcat6:tomcat6 "$TOMCAT/${eip_name/.war/}"
+escaped_conf="$(echo "$EIP_SERVER_PATH" | sed -e 's/[\/&]/\\&/g')"
+escaped_log="$(echo "$EIP_LOG_PATH" | sed -e 's/[\/&]/\\&/g')"
 
-	echo "Restarting tomcat6 service"
-	sudo service tomcat6 start
+cd "WEB-INF"
+cat web.xml | sed "s/\${eip.war.home}\/logs\/eip.log/$escaped_log/g" | sed "s/\/eipServer.conf/$escaped_conf/g" > web2.xml
+mv web2.xml web.xml
 
-	echo "Operation complete"
+cd "$TOMCAT"
+chown -R "$USER_GROUP" "$TOMCAT/${eip_name/.war/}"
 
-}
+echo "Deployment complete!"
+read -p "Do you want to start tomcat now? (y/n): "
+case "$REPLY" in
+	y|Y) catalina.sh start ;;
+	n|N) ;;
+	*) echo "Invalid input! You can start Tomcat manually at any time" ;;
+esac
 
-# Execute main function
-main
-
-
+# THIS IS THE MAGIC FORMULA TO DO WEB.XML REPLACEMENTS PROPERLY
+# cat web.xml | sed 's/\$server.logFile\$/myLogFile/g' | sed 's/\/\$server.configFile\$/myServerConfg/g' > web2.xml
+# ${eip.war.home}/logs/eip.log
+# /eipServer.conf

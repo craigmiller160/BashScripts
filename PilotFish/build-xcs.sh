@@ -99,56 +99,48 @@ if ! $CLEAN ; then
 fi
 
 if $CLEAN ; then
-	echo ""
-	echo "This will clean your project directory of all build files"
-	read -p "Proceed? (y/n): "
-	case $REPLY in
-		y|Y) CLEAN=true ;;
-		n|N) CLEAN=false ;;
-		*)
-			echo "Error! Invalid input"
-		;;
-	esac
-	if $CLEAN ; then
-		echo "Cleaning, please wait..."
-		cd "$START_DIR"
+	echo "Cleaning, please wait..."
+	cd "$START_DIR"
 
-		# All these folders and/or contents
-		rm -rf classes 1>/dev/null 2>/dev/null
-		rm -rf eip-staging 1>/dev/null 2>/dev/null
-		rm -rf eip-staging-ext 1>/dev/null 2>/dev/null
-		rm -rf eip-staging-modules 1>/dev/null 2>/dev/null
-		rm -rf dist 1>/dev/null 2>/dev/null
-		rm -rf resources/releases/eiConsole/build/* 1>/dev/null 2>/dev/null
-		rm -rf resources/releases/eiConsole/staging/* 1>/dev/null 2>/dev/null
-		rm -rf resources/releases/eiPlatform-Windows/build/ 1>/dev/null 2>/dev/null
+	# All these folders and/or contents
+	rm -rf classes 1>/dev/null 2>/dev/null
+	rm -rf eip-staging 1>/dev/null 2>/dev/null
+	rm -rf eip-staging-ext 1>/dev/null 2>/dev/null
+	rm -rf eip-staging-modules 1>/dev/null 2>/dev/null
+	rm -rf dist 1>/dev/null 2>/dev/null
+	rm -rf resources/releases/eiConsole/build/* 1>/dev/null 2>/dev/null
+	rm -rf resources/releases/eiConsole/staging/* 1>/dev/null 2>/dev/null
+	rm -rf resources/releases/eiPlatform-Windows/build/ 1>/dev/null 2>/dev/null
 
-		# Remove specific files from the eiPlatform-windows/staging directory, leaving the contents that should remain
-		rm resources/releases/eiPlatform-Windows/staging/api_access_roles.properties 1>/dev/null 2>/dev/null
-		rm resources/releases/eiPlatform-Windows/staging/module_access_roles.properties 1>/dev/null 2>/dev/null
-		rm -rf resources/releases/eiPlatform-Windows/staging/server/ 1>/dev/null 2>/dev/null
-		rm -rf resources/releases/eiPlatform-Windows/temp/ 1>/dev/null 2>/dev/null
-		rm -rf resources/releases/eiPlatform-Windows/staging/runtime/ 1>/dev/null 2>/dev/null
-		rm -rf resources/releases/eiPlatform-Windows/staging/samples/ 1>/dev/null 2>/dev/null
-		rm -rf resources/releases/eiPlatform-Windows/staging/api/ 1>/dev/null 2>/dev/null
-		rm -rf resources/releases/eiPlatform-Windows/staging/dashboardui/ 1>/dev/null 2>/dev/null
-		rm -rf resources/releases/eiPlatform-Windows/staging/dashboardui_cleaned/ 1>/dev/null 2>/dev/null
-		rm resources/releases/eiPlatform-Windows/staging/dataSources.xml 1>/dev/null 2>/dev/null
-		rm -rf resources/releases/eiPlatform-Windows/staging/docs/ 1>/dev/null 2>/dev/null
-		rm resources/releases/eiPlatform-Windows/staging/eas.conf 1>/dev/null 2>/dev/null
-		rm resources/releases/eiPlatform-Windows/staging/eassettings.txt 1>/dev/null 2>/dev/null
-		rm resources/releases/eiPlatform-Windows/staging/license-notices.txt 1>/dev/null 2>/dev/null
-		rm resources/releases/eiPlatform-Windows/staging/license.txt 1>/dev/null 2>/dev/null
-		rm resources/releases/eiPlatform-Windows/staging/eipRegressionRemote-*.jar 1>/dev/null 2>/dev/null
+	# Remove specific files from the eiPlatform-windows/staging directory, leaving the contents that should remain
+	rm resources/releases/eiPlatform-Windows/staging/api_access_roles.properties 1>/dev/null 2>/dev/null
+	rm resources/releases/eiPlatform-Windows/staging/module_access_roles.properties 1>/dev/null 2>/dev/null
+	rm -rf resources/releases/eiPlatform-Windows/staging/server/ 1>/dev/null 2>/dev/null
+	rm -rf resources/releases/eiPlatform-Windows/temp/ 1>/dev/null 2>/dev/null
+	rm -rf resources/releases/eiPlatform-Windows/staging/runtime/ 1>/dev/null 2>/dev/null
+	rm -rf resources/releases/eiPlatform-Windows/staging/samples/ 1>/dev/null 2>/dev/null
+	rm -rf resources/releases/eiPlatform-Windows/staging/api/ 1>/dev/null 2>/dev/null
+	rm -rf resources/releases/eiPlatform-Windows/staging/dashboardui/ 1>/dev/null 2>/dev/null
+	rm -rf resources/releases/eiPlatform-Windows/staging/dashboardui_cleaned/ 1>/dev/null 2>/dev/null
+	rm resources/releases/eiPlatform-Windows/staging/dataSources.xml 1>/dev/null 2>/dev/null
+	rm -rf resources/releases/eiPlatform-Windows/staging/docs/ 1>/dev/null 2>/dev/null
+	rm resources/releases/eiPlatform-Windows/staging/eas.conf 1>/dev/null 2>/dev/null
+	rm resources/releases/eiPlatform-Windows/staging/eassettings.txt 1>/dev/null 2>/dev/null
+	rm resources/releases/eiPlatform-Windows/staging/license-notices.txt 1>/dev/null 2>/dev/null
+	rm resources/releases/eiPlatform-Windows/staging/license.txt 1>/dev/null 2>/dev/null
+	rm resources/releases/eiPlatform-Windows/staging/eipRegressionRemote-*.jar 1>/dev/null 2>/dev/null
+	rm resources/releases/eiPlatform-Windows/staging/securityContext.xml 1>/dev/null 2>/dev/null
 
-		# Remove eip-lite files & directories
-		rm -rf resources/releases/eip-lite-server/build/ 1>/dev/null 2>/dev/null
-		rm -rf resources/releases/eip-lite-server/staging/docs/ 1>/dev/null 2>/dev/null
-		rm -rf resources/releases/eip-lite-server/staging/server/ 1>/dev/null 2>/dev/null
+	# Remove eip-lite files & directories
+	rm -rf resources/releases/eip-lite-server/build/ 1>/dev/null 2>/dev/null
+	rm -rf resources/releases/eip-lite-server/staging/docs/ 1>/dev/null 2>/dev/null
+	rm -rf resources/releases/eip-lite-server/staging/server/ 1>/dev/null 2>/dev/null
 
-		# Restore specific files from git that have been changed during this process
-		git checkout rman/com/pilotfish/eip/rest/doc/resourcedoc.xml 1>/dev/null 2>/dev/null
-		git checkout resources/releases/eiPlatform-Windows/staging/eipServer.conf 1>/dev/null 2>/dev/null
-		git checkout resources/releases/eiPlatform-Windows/staging/logConfig.xml 1>/dev/null 2>/dev/null
-	fi
+	# Other directories
+	rm -rf temp/ 1>/dev/null 2>/dev/null
+
+	# Restore specific files from git that have been changed during this process
+	git checkout rman/com/pilotfish/eip/rest/doc/resourcedoc.xml 1>/dev/null 2>/dev/null
+	git checkout resources/releases/eiPlatform-Windows/staging/eipServer.conf 1>/dev/null 2>/dev/null
+	git checkout resources/releases/eiPlatform-Windows/staging/logConfig.xml 1>/dev/null 2>/dev/null
 fi
