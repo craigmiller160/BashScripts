@@ -27,12 +27,12 @@ sudo update-alternatives --install /usr/bin/javaws javaws /usr/java/latest/bin/j
 sudo update-alternatives --install /usr/bin/javah javah /usr/java/latest/bin/javah 1551
 sudo update-alternatives --install /usr/bin/jarsigner jarsigner /usr/java/latest/bin/jarsigner 1551
 
-sudo update-alternatives –set java "/usr/java/latest/bin/java"
-sudo update-alternatives –set javac "/usr/java/latest/bin/javac"
-sudo update-alternatives –set javaws "/usr/java/latest/bin/javaws"
+sudo update-alternatives --set java /usr/java/latest/bin/java
+sudo update-alternatives -–set javac /usr/java/latest/bin/javac
+sudo update-alternatives -–set javaws /usr/java/latest/bin/javaws
 
-sudo update-alternatives --config java
-sudo update-alternatives --config javac
+# sudo update-alternatives --config java
+# sudo update-alternatives --config javac
 
 
 # sudo update-alternatives –install "/usr/bin/java" "java" "$JAVA_HOME/bin/java" 1
