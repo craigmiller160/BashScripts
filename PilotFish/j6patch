@@ -1,0 +1,4 @@
+#!/bin/bash
+# Convert from java 7 to java 6
+
+printf "\x00\x00\x00\x32" |dd of=$1 seek=4 bs=1 count=4 conv=notrunc
