@@ -3,6 +3,7 @@
 
 # The function to execute to convert a class file to java 6
 function j6patch() {
+	echo "$1 "
 	printf "\x00\x00\x00\x32" |dd of=$1 seek=4 bs=1 count=4 conv=notrunc
 }
 
@@ -32,7 +33,7 @@ jar xf $jar_name
 rm $jar_name
 
 # Find all class files and run the patch on them
-find . -name \*.class -exec bash -c 'j6patch "{}"' \;
+find . -name '*.class' -exec bash -c 'j6patch "$0"' {} \;
 files=$(ls -l | awk '{print $9}' | tr '\n' ' ')
 
 # If a manifest exists, use it. Otherwise, use default
