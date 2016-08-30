@@ -128,9 +128,8 @@ if $CLEAN ; then
 	rm resources/releases/eiPlatform-Windows/staging/eassettings.txt 1>/dev/null 2>/dev/null
 	rm resources/releases/eiPlatform-Windows/staging/license-notices.txt 1>/dev/null 2>/dev/null
 	rm resources/releases/eiPlatform-Windows/staging/license.txt 1>/dev/null 2>/dev/null
-	rm resources/releases/eiPlatform-Windows/staging/eipRegressionRemote-*.jar 1>/dev/null 2>/dev/null
+	rm -rf resources/releases/eiPlatform-Windows/staging/regression 1>/dev/null 2>/dev/null
 	rm resources/releases/eiPlatform-Windows/staging/securityContext.xml 1>/dev/null 2>/dev/null
-	rm resources/releases/eiPlatform-Windows/staging/regressionCaptureJammer.jar 1>/dev/null 2>/dev/null
 
 	# Remove eip-lite files & directories
 	rm -rf resources/releases/eip-lite-server/build/ 1>/dev/null 2>/dev/null
@@ -144,6 +143,9 @@ if $CLEAN ; then
 	git checkout rman/com/pilotfish/eip/rest/doc/resourcedoc.xml 1>/dev/null 2>/dev/null
 	git checkout resources/releases/eiPlatform-Windows/staging/eipServer.conf 1>/dev/null 2>/dev/null
 	git checkout resources/releases/eiPlatform-Windows/staging/logConfig.xml 1>/dev/null 2>/dev/null
+
+	# Regression stuff
+	rm -rf regression 1>/dev/null 2>/dev/null
 fi
 
 # Option to run deploy script for eip.war
