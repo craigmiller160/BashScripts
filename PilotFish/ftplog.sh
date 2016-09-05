@@ -22,12 +22,17 @@ fi
 
 files=($(ls -l | awk '{ print $9 }' | sort -nr))
 for f in "${files[@]}"; do
-	egrep 'FTPTRANSPORT ([0-9]*)' $f | sort -n -k7 | tee -a $FTPLOG
+	egrep 'FTPLISTENER*' $f | sort -n -k7 | tee -a $FTPLOG
 done
 
-cat $FTPLOG | sort -n -k7 | tee -a $FTPLOG_SORT
+# cat $FTPLOG | sort -n -k7 | tee -a $FTPLOG_SORT
 
-cat $FTPLOG_SORT
+# cat $FTPLOG_SORT
+
+# count=0
+# while read -r line || [[ -n "$line" ]]; do
+
+# done
 
 # IFS=$'\n'
 
