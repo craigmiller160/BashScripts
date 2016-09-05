@@ -1,0 +1,52 @@
+#!/bin/bash
+# Shutdown script
+
+## ADD THIS TO .bashrc
+## xhost local:craig >/dev/null
+
+function main {
+	case $1 in
+		now) shutdown_now ;;
+		dialog) shutdown_dialog ;;
+		*)
+			echo "Error! Invalid arguments: $1"
+			exit 1
+		;;
+	esac
+}
+
+function shutdown_dialog {
+	zenity --question --text "Automated system shutdown set to begin in 30 seconds." --ok-label="Shutdown Now" --cancel-label="Cancel Shutdown" --title "System Shutdown" --display=:0.0 --timeout 30
+
+	if [ $? -ne 1 ]; then
+		zenity --info --display=:0.0 --text "Preparing to shut down machine" --timeout 3
+		sleep 1
+		systemctl poweroff -i
+	else
+		zenity --info --display=:0.0 --text "System shutdown cancelled." --timeout 3
+	fi 
+}
+
+function shutdown_now {
+	systemctl poweroff -i
+}
+
+function script_help {
+	echo "  System Shutdown commands:"
+	echo ""
+	echo "  dialog  =  Show confirmation prompt for 30 seconds before shutting down system."
+	echo "  now     =  Shutdown system immediately."
+}
+
+if [[ $# -lt 1 ]]; then
+	script_help
+	exit 0
+fi
+
+if [[ $# -gt 1 ]]; then
+	echo "Error! Invalid number of arguments: $#"
+	exit 1
+fi
+
+
+main $1

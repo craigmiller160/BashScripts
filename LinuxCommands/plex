@@ -1,0 +1,35 @@
+#!/bin/bash
+# Plex commands script
+
+function main {
+	case $1 in
+		refresh) refresh_plex ;;
+		*)
+			echo "Error! Invalid argument: $1"
+		;;
+	esac
+}
+
+function refresh_plex {
+	echo "Refreshing PlexMediaServer"
+	curl http://localhost:32400/library/sections/1/refresh
+	curl http://localhost:32400/library/sections/2/refresh
+}
+
+function script_help {
+	echo "  Plex commands:"
+	echo ""
+	echo "  refresh  =  Refresh all plex libraries for new content."
+}
+
+if [[ $# -lt 1 ]]; then
+	script_help
+	exit 0
+fi
+
+if [[ $# -gt 1 ]]; then
+	echo "Error! Invalid number of arguments: $#"
+	exit 1
+fi
+
+main $1

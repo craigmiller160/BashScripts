@@ -1,0 +1,78 @@
+#!/bin/bash
+# A script to simplify the various commands
+
+function main {
+	status=$(sudo service tomcat8 status | grep Active | awk '{ print $2 }')
+
+	case $1 in
+		start) start $status ;;
+		stop) stop $status ;;
+		restart) restart ;;
+		status) tom_status $status ;;
+		status-full) sudo service tomcat8 status ;;
+		*)
+			echo "Error! Invalid argument: $1"
+			exit 1
+		;;
+	esac
+}
+
+function start {
+	status=$1
+
+	if [[ $status == "active" ]]; then
+		echo "Tomcat has already started"
+	else
+		sudo service tomcat8 start
+		echo "Tomcat has started"
+	fi
+}
+
+function stop {
+	status=$1
+
+	if [[ $status == "inactive" ]]; then
+		echo "Tomcat has already stopped"
+	else
+		sudo service tomcat8 stop
+		echo "Tomcat has stopped"
+	fi
+}
+
+function restart {
+	sudo service tomcat8 restart
+	echo "Tomcat has been restarted"
+}
+
+function tom_status {
+	status=$1
+
+	if [[ $status == "active" ]]; then
+		echo "Tomcat is running"
+	else
+		echo "Tomcat is not running"
+	fi
+}
+
+function script_help {
+	echo "  Tomcat commands:"
+	echo ""
+	echo "  restart      =  Restart the Tomcat8 service."
+	echo "  start        =  Start the Tomcat8 service, if it has not already been started."
+	echo "  status       =  Get the simple status of whether the Tomcat8 service is running."
+	echo "  status-full  =  Get the full status of the Tomcat8 service."
+	echo "  stop         =  Stop the Tomcat8 service, if it has not already been stopped."
+
+}
+
+if [[ $# -lt 1 ]]; then
+	script_help
+	exit 0
+fi
+
+if [[ $# -gt 1 ]]; then
+	echo "Error! Invalid number of arguments: $#"
+	exit 1
+fi
+
+main $1
