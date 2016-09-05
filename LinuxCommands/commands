@@ -1,0 +1,8 @@
+#!/bin/bash
+# A script that displays the custom commands that are available
+
+echo "  Commands:"
+echo ""
+echo "  plex    =  PlexMediaServer commands."
+echo "  sysoff  =  System shutdown commands."
+echo "  tomcat  =  Tomcat Server commands."
