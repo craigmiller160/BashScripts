@@ -1,7 +1,7 @@
 #!/bin/bash
 # Deploy eip.war to tomcat
 
-SETTINGS="$HOME/.deploy-eip.conf"
+SETTINGS="$HOME/.eip-deployment.conf"
 
 EIP_WAR="eip.war"
 EIP_DASHBOARD_WAR="eip.dashboard.war"
@@ -13,6 +13,15 @@ if [ $UID != 0 ]; then
 	echo "This script must be run with superuser permissions."
 	exit 1
 fi
+
+DEPLOYMENTS=()
+while IFS='' read -r line || [[ -n "$line" ]]; do
+	case "$line" in
+		Deployment*)
+			# TODO finish this
+		;;
+	esac
+done < "$SETTINGS"
 
 # Prompt to see which war file is being deployed
 read -p "Which eip.war do you want to deploy? eip.war (1) or eip.dashboard.war (2): "
