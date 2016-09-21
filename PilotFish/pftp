@@ -1,0 +1,6 @@
+#!/bin/bash
+# PilotFish FTP shortcuts
+
+# ftp://slipstream_release:ocean@adriatic.pilotfish-net.com
+# ftp://adriatic.pilotfish-net.com
+# ftp://slipstream@perch.pilotfish-net.com

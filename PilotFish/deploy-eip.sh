@@ -139,11 +139,11 @@ cd "$TOMCAT"
 chown -R "$USER_GROUP" "$TOMCAT/${eip_name/.war/}"
 
 echo "Deployment complete!"
-read -p "Do you want to start tomcat now? (y/n): "
-case "$REPLY" in
-	y|Y) catalina.sh start ;;
-	n|N) ;;
-	*) echo "Invalid input! You can start Tomcat manually at any time" ;;
-esac
+# read -p "Do you want to start tomcat now? (y/n): "
+# case "$REPLY" in
+	# y|Y) catalina.sh start ;;
+	# n|N) ;;
+	# *) echo "Invalid input! You can start Tomcat manually at any time" ;;
+# esac
 
 
