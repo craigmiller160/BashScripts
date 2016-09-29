@@ -13,9 +13,12 @@
 install4J_jarLoc="/Applications/install4j 5/bin/ant.jar"
 ##########################
 
+BUILD_NEW_MAIN=resources/build/build_new_main.xml
+BUILD_NEW_MAIN_GIT=resources/build/build_new_main_git.xml
 EI_CONSOLE="eiConsole.buildRelease"
 EIP_WAR="eip.war.buildAll"
 EIC_BUNDLE="eicBundle.buildRelease"
+EIC_BUNDLE_W_REVISION="eicBundle.buildRelease.with.revision"
 CLEAN=false
 START_DIR=$(pwd)
 
@@ -26,14 +29,28 @@ echo "  1) eiConsole (installer)"
 echo "  2) eiPlatform (war)"
 echo "  3) eiConsole + eiPlatform (installer)"
 echo "  4) Clean (remove files created by installation)"
+echo "  5) Test eic-bundle"
 echo ""
 
 read -p "Choice: "
 case "$REPLY" in
-	1) ANT_TARGET="$EI_CONSOLE" ;;
-	2) ANT_TARGET="$EIP_WAR" ;;
-	3) ANT_TARGET="$EIC_BUNDLE" ;;
+	1) 
+		ANT_TARGET="$EI_CONSOLE"
+		BUILD_FILE="$BUILD_NEW_MAIN"
+	;;
+	2)
+		ANT_TARGET="$EIP_WAR"
+		BUILD_FILE="$BUILD_NEW_MAIN"
+	;;
+	3) 
+		ANT_TARGET="$EIC_BUNDLE"
+		BUILD_FILE="$BUILD_NEW_MAIN"
+	;;
 	4) CLEAN=true ;;
+	5)
+		ANT_TARGET="$EIC_BUNDLE_W_REVISION"
+		BUILD_FILE="$BUILD_NEW_MAIN_GIT"
+	;;
 	*) 
 		echo "Error! Invalid input"
 		exit 1
@@ -61,7 +78,7 @@ if ! $CLEAN ; then
 
 	### TODO ensure that there isn't a trailing - when no name is set
 
-	ant -f resources/build/build_new_main.xml "$ANT_TARGET" -Dinstall4J.jarLoc="$install4J_jarLoc"
+	ant -f "$BUILD_FILE" "$ANT_TARGET" -Dinstall4J.jarLoc="$install4J_jarLoc"
 	echo "Copying application components to output directory, please wait..."
 	apppath=""
 	case "$ANT_TARGET" in

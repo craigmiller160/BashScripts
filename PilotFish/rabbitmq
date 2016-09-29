@@ -1,0 +1,32 @@
+#!/bin/bash
+# Rabbit MQ control script
+
+function main {
+	case $1 in
+		start) rabbitmq-server & ;;
+		stop) rabbitmqctl stop ;;
+		status) rabbitmqctl status ;;
+	esac
+}
+
+function script_help {
+	echo "RabbitMQ Default Port: 15672"
+	echo ""
+	echo "RabbitMQ Commands"
+	echo ""
+	echo "start   =  Start the server."
+	echo "stop    =  Stop the server."
+	echo "status  =  Get the status of the server."
+}
+
+if [[ $# -lt 1 ]]; then
+	script_help
+	exit 0
+fi
+
+if [[ $# -gt 1 ]]; then
+	echo "Error! Invalid number of arguments"
+	exit 1
+fi
+
+main $1
