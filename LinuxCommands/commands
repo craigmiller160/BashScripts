@@ -3,6 +3,7 @@
 
 echo "  Commands:"
 echo ""
+echo "  crypto  =  File encryption commands."
 echo "  plex    =  PlexMediaServer commands."
 echo "  sysoff  =  System shutdown commands."
 echo "  tomcat  =  Tomcat Server commands."
