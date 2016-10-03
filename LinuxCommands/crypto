@@ -1,0 +1,50 @@
+#!/bin/bash
+# Script to encrypt/decrypt files
+
+ENCRYPT="encrypt"
+DECRYPT="decrypt"
+
+function main {
+	case $1 in
+		e) operation=$ENCRYPT ;;
+		d) operation=$DECRYPT ;;
+		*)
+			echo "Error! Invalid input!"
+			exit 1
+		;;
+	esac
+
+	read -p "File to $operation: "
+	inputFile=$REPLY
+	if [[ ! -f $inputFile ]]; then
+		echo "Error! File to $operation does not exist!"
+		exit 1
+	fi
+
+	read -p "Output file: "
+	outputFile=$REPLY
+
+	case $operation in
+		$ENCRYPT) gpg2 --output $outputFile --symmetric --cipher-algo AES256 $inputFile ;;
+		$DECRYPT) gpg2 --output $outputFile --decrypt $inputFile ;;
+	esac
+}
+
+function script_help {
+	echo "  Cryptography Commands:"
+	echo ""
+	echo "  e  =  Encrypt a specified file."
+	echo "  d  =  Decrypt a specified file."
+}
+
+if [[ $# -lt 1 ]]; then
+	script_help
+	exit 0
+fi
+
+if [[ $# -gt 1 ]]; then
+	echo "Error! Invalid number of arguments: $#"
+	exit 1
+fi
+
+main $1
