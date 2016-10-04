@@ -3,6 +3,8 @@
 
 ENCRYPT="encrypt"
 DECRYPT="decrypt"
+AES128="AES128"
+AES256="AES256"
 
 function main {
 	case $1 in
@@ -13,6 +15,21 @@ function main {
 			exit 1
 		;;
 	esac
+
+	if [[ $operation == $ENCRYPT ]]; then
+		echo "Algorithms"
+		echo "  1) AES-128"
+		echo "  2) AES-256"
+		read -p "Choose algorithm: "
+		case $REPLY in
+			1) algorithm=$AES128 ;;
+			2) algorithm=$AES256 ;;
+			*)
+				echo "Error! Invalid selection"
+				exit 1
+			;;
+		esac
+	fi
 
 	read -p "File to $operation: "
 	inputFile=$REPLY
@@ -25,8 +42,12 @@ function main {
 	outputFile=$REPLY
 
 	case $operation in
-		$ENCRYPT) gpg2 --output $outputFile --symmetric --cipher-algo AES256 $inputFile ;;
+		$ENCRYPT) gpg2 --output $outputFile --symmetric --cipher-algo $algorithm $inputFile ;;
 		$DECRYPT) gpg2 --output $outputFile --decrypt $inputFile ;;
+		*)
+			echo "Error! Invalid operation setting: $operation"
+			exit 1
+		;;
 	esac
 }
 
