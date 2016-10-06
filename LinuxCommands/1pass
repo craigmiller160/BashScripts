@@ -1,0 +1,30 @@
+#!/bin/bash
+# Script to run 1Password through Wine
+
+function main {
+	case $1 in
+		start) wine "C:\Program Files (x86)\1Password 4\1Password.exe" ;;
+		*)
+			echo "Error! Invalid argument"
+			exit 1
+		;;
+	esac
+}
+
+function script_help {
+	echo "  1Password Commands:"
+	echo ""
+	echo "  start  =  Run the main 1Password.exe application."
+}
+
+if [[ $# -lt 1 ]]; then
+	script_help
+	exit 0
+fi
+
+if [[ $# -gt 1 ]]; then
+	echo "Error! Invalid number of arguments"
+	exit 1
+fi
+
+main $1

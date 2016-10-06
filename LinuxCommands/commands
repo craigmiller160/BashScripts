@@ -3,6 +3,7 @@
 
 echo "  Commands:"
 echo ""
+echo "  1pass   =  1Password commands."
 echo "  crypto  =  File encryption commands."
 echo "  plex    =  PlexMediaServer commands."
 echo "  sysoff  =  System shutdown commands."
