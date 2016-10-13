@@ -15,10 +15,12 @@ install4J_jarLoc="/Applications/install4j 5/bin/ant.jar"
 
 BUILD_NEW_MAIN=resources/build/build_new_main.xml
 BUILD_NEW_MAIN_GIT=resources/build/build_new_main_git.xml
+BUILD_REGRESSION=resources/build/build_regression.xml
 EI_CONSOLE="eiConsole.buildRelease"
 EIP_WAR="eip.war.buildAll"
 EIC_BUNDLE="eicBundle.buildRelease"
 EIC_BUNDLE_W_REVISION="eicBundle.buildRelease.with.revision"
+REGRESSION_TARGET="package.solo"
 CLEAN=false
 START_DIR=$(pwd)
 
@@ -28,8 +30,8 @@ echo "Select the type of build to run:"
 echo "  1) eiConsole (installer)"
 echo "  2) eiPlatform (war)"
 echo "  3) eiConsole + eiPlatform (installer)"
-echo "  4) Clean (remove files created by installation)"
-echo "  5) Test eic-bundle"
+echo "  4) Regression Components"
+echo "  5) Clean (remove files created by installation)"
 echo ""
 
 read -p "Choice: "
@@ -46,11 +48,11 @@ case "$REPLY" in
 		ANT_TARGET="$EIC_BUNDLE"
 		BUILD_FILE="$BUILD_NEW_MAIN"
 	;;
-	4) CLEAN=true ;;
-	5)
-		ANT_TARGET="$EIC_BUNDLE_W_REVISION"
-		BUILD_FILE="$BUILD_NEW_MAIN_GIT"
+	4)
+		ANT_TARGET="$REGRESSION_TARGET"
+		BUILD_FILE="$BUILD_REGRESSION"
 	;;
+	5) CLEAN=true ;;
 	*) 
 		echo "Error! Invalid input"
 		exit 1
@@ -78,6 +80,9 @@ if ! $CLEAN ; then
 
 	### TODO ensure that there isn't a trailing - when no name is set
 
+	echo $BUILD_FILE
+	echo $ANT_TARGET
+
 	ant -f "$BUILD_FILE" "$ANT_TARGET" -Dinstall4J.jarLoc="$install4J_jarLoc"
 	echo "Copying application components to output directory, please wait..."
 	apppath=""
@@ -99,6 +104,12 @@ if ! $CLEAN ; then
 			apppath="$HOME/xcs-app/eicBundle-$name"
 			mkdir -p "$apppath"
 			cp -R ./resources/releases/eiPlatform-Windows/build/* "$apppath"
+		;;
+		"$REGRESSION_TARGET")
+			rm -rf $HOME/xcs-app/regression* 1>/dev/null 2>/dev/null
+			apppath="$HOME/xcs-app/regression-$name"
+			mkdir -p "$apppath"
+			cp -R ./regression/* "$apppath"
 		;;
 	esac
 	echo "Build complete. Application is located at $apppath"
