@@ -158,6 +158,10 @@ if $CLEAN ; then
 	rm resources/releases/eiPlatform-Windows/staging/license.txt 1>/dev/null 2>/dev/null
 	rm -rf resources/releases/eiPlatform-Windows/staging/regression 1>/dev/null 2>/dev/null
 	rm resources/releases/eiPlatform-Windows/staging/securityContext.xml 1>/dev/null 2>/dev/null
+	rm resources/releases/eiPlatform-Windows/staging/startRegressionJammer.sh 1>/dev/null 2>/dev/null
+	rm resources/releases/eiPlatform-Windows/staging/startRegressionJammer.cmd 1>/dev/null 2>/dev/null
+	rm resources/releases/eiPlatform-Windows/staging/startRegressionRemote.sh 1>/dev/null 2>/dev/null
+	rm resources/releases/eiPlatform-Windows/staging/startRegressionRemote.cmd 1>/dev/null 2>/dev/null
 
 	# Remove eip-lite files & directories
 	rm -rf resources/releases/eip-lite-server/build/ 1>/dev/null 2>/dev/null
