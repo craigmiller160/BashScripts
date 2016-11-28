@@ -6,14 +6,14 @@ CURRENT_DIR=$(pwd)
 find_file=""
 
 function main {
-	read -p "File to search for:"
+	read -p "File to search for: "
 	find_file="$REPLY"
 
 	if [[ $find_file == "" ]]; then
 		echo "Error! No file to search for selected"
 		exit 1
 	else
-		read -p "Confirm file to search for: $find_file"
+		read -p "Confirm file to search for: $find_file. (y/n): "
 		case $REPLY in
 			y|Y) ;;
 			n|N)
