@@ -17,6 +17,7 @@ BUILD_NEW_MAIN=resources/build/build_new_main.xml
 BUILD_NEW_MAIN_GIT=resources/build/build_new_main_git.xml
 BUILD_REGRESSION=resources/build/build_regression.xml
 EI_CONSOLE="eiConsole.buildRelease"
+EI_CONSOLE_W_REVISION="eiConsole.buildAll.with.revision"
 EIP_WAR="eip.war.buildAll"
 EIC_BUNDLE="eicBundle.buildRelease"
 EIC_BUNDLE_W_REVISION="eicBundle.buildRelease.with.revision"
@@ -37,16 +38,16 @@ echo ""
 read -p "Choice: "
 case "$REPLY" in
 	1) 
-		ANT_TARGET="$EI_CONSOLE"
-		BUILD_FILE="$BUILD_NEW_MAIN"
+		ANT_TARGET="$EI_CONSOLE_W_REVISION"
+		BUILD_FILE="$BUILD_NEW_MAIN_GIT"
 	;;
 	2)
 		ANT_TARGET="$EIP_WAR"
 		BUILD_FILE="$BUILD_NEW_MAIN"
 	;;
 	3) 
-		ANT_TARGET="$EIC_BUNDLE"
-		BUILD_FILE="$BUILD_NEW_MAIN"
+		ANT_TARGET="$EIC_BUNDLE_W_REVISION"
+		BUILD_FILE="$BUILD_NEW_MAIN_GIT"
 	;;
 	4)
 		ANT_TARGET="$REGRESSION_TARGET"
@@ -83,11 +84,13 @@ if ! $CLEAN ; then
 	echo $BUILD_FILE
 	echo $ANT_TARGET
 
+	# exit 1 ## TODO delete this
+
 	ant -f "$BUILD_FILE" "$ANT_TARGET" -Dinstall4J.jarLoc="$install4J_jarLoc"
 	echo "Copying application components to output directory, please wait..."
 	apppath=""
 	case "$ANT_TARGET" in
-		"$EI_CONSOLE")
+		"$EI_CONSOLE_W_REVISION")
 			rm -rf $HOME/xcs-app/eiConsole* 1>/dev/null 2>/dev/null
 			apppath="$HOME/xcs-app/eiConsole-$name"
 			mkdir -p "$apppath"
@@ -99,7 +102,7 @@ if ! $CLEAN ; then
 			mkdir -p "$apppath"
 			cp -R ./dist/* "$apppath"
 		;;
-		"$EIC_BUNDLE")
+		"$EIC_BUNDLE_W_REVISION")
 			rm -rf $HOME/xcs-app/eicBundle* 1>/dev/null 2>/dev/null
 			apppath="$HOME/xcs-app/eicBundle-$name"
 			mkdir -p "$apppath"
