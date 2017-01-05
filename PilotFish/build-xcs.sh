@@ -31,8 +31,9 @@ echo "Select the type of build to run:"
 echo "  1) eiConsole (installer)"
 echo "  2) eiPlatform (war)"
 echo "  3) eiConsole + eiPlatform (installer)"
-echo "  4) Regression Components"
-echo "  5) Clean (remove files created by installation)"
+echo "  4) Regression Components (solo)"
+echo "  5) eiConsole + eiPlatform (installer) + Regression"
+echo "  6) Clean (remove files created by installation)"
 echo ""
 
 read -p "Choice: "
@@ -53,7 +54,11 @@ case "$REPLY" in
 		ANT_TARGET="$REGRESSION_TARGET"
 		BUILD_FILE="$BUILD_REGRESSION"
 	;;
-	5) CLEAN=true ;;
+	5)
+		ANT_TARGET="$EIC_BUNDLE"
+		BUILD_FILE="$BUILD_NEW_MAIN"
+	;;
+	6) CLEAN=true ;;
 	*) 
 		echo "Error! Invalid input"
 		exit 1
@@ -92,25 +97,37 @@ if ! $CLEAN ; then
 	case "$ANT_TARGET" in
 		"$EI_CONSOLE_W_REVISION")
 			rm -rf $HOME/xcs-app/eiConsole* 1>/dev/null 2>/dev/null
-			apppath="$HOME/xcs-app/eiConsole-$name"
+			apppath="$HOME/xcs-app/eiConsole"
+			if [[ "$name" != "" ]]; then
+				apppath="$apppath-$name"
+			fi
 			mkdir -p "$apppath"
 			cp -R ./resources/releases/eiConsole/build/* "$apppath"
 		;;
 		"$EIP_WAR")
 			rm -rf $HOME/xcs-app/eipWar* 1>/dev/null 2>/dev/null
-			apppath="$HOME/xcs-app/eipWar-$name"
+			apppath="$HOME/xcs-app/eipWar"
+			if [[ "$name" != "" ]]; then
+				apppath="$apppath-$name"
+			fi
 			mkdir -p "$apppath"
 			cp -R ./dist/* "$apppath"
 		;;
-		"$EIC_BUNDLE_W_REVISION")
+		"$EIC_BUNDLE_W_REVISION" | "$EIC_BUNDLE")
 			rm -rf $HOME/xcs-app/eicBundle* 1>/dev/null 2>/dev/null
-			apppath="$HOME/xcs-app/eicBundle-$name"
+			apppath="$HOME/xcs-app/eicBundle"
+			if [[ "$name" != "" ]]; then
+				apppath="$apppath-$name"
+			fi
 			mkdir -p "$apppath"
 			cp -R ./resources/releases/eiPlatform-Windows/build/* "$apppath"
 		;;
 		"$REGRESSION_TARGET")
 			rm -rf $HOME/xcs-app/regression* 1>/dev/null 2>/dev/null
-			apppath="$HOME/xcs-app/regression-$name"
+			apppath="$HOME/xcs-app/regression"
+			if [[ "$name" != "" ]]; then
+				apppath="$apppath-$name"
+			fi
 			mkdir -p "$apppath"
 			cp -R ./regression/* "$apppath"
 		;;
