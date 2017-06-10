@@ -1,0 +1,102 @@
+#!/bin/bash
+# A script for generating and verifying hashes
+
+MD5="MD5"
+SHA1="SHA-1"
+SHA256="SHA-256"
+SHA512="SHA-512"
+
+TEMP_FILE="temp.dat"
+
+function main {
+	case $1 in
+		gen) gen_hash ;;
+		check) check_hash ;;
+		*)
+			echo "Error! Invalid argument: $1"
+			exit 1
+		;;
+	esac
+}
+
+function gen_hash {
+	select_alg
+	select_file
+
+	case $operation in
+		$MD5) md5sum "$selected_file" ;;
+		$SHA1) sha1sum "$selected_file" ;;
+		$SHA256) sha256sum "$selected_file" ;;
+		$SHA-512) sha512sum "$selected_file" ;;
+		*)
+			echo "Error! Invalid argument: $operation"
+			exit 1
+		;;
+	esac
+}
+
+function check_hash {
+	select_alg
+	select_file
+
+	read -p "Enter hash: "
+	checksum=$REPLY
+
+	echo "$checksum  $selected_file" > $TEMP_FILE
+
+	case $operation in
+		$MD5) md5sum -c $TEMP_FILE ;;
+		$SHA1) sha1sum -c $TEMP_FILE ;;
+		$SHA256) sha256sum -c $TEMP_FILE ;;
+		$SHA512) sha512sum -c $TEMP_FILE ;;
+		*)
+			echo "Error! Invalid argument: $operation"
+			exit 1
+		;;
+	esac
+
+	rm $TEMP_FILE
+}
+
+function select_alg {
+	echo "Supported Algorithms:"
+	echo "  1) $MD5"
+	echo "  2) $SHA1"
+	echo "  3) $SHA256"
+	echo "  4) $SHA512"
+	read -p "Select algorithm: "
+	case $REPLY in
+		1) alg=$MD5 ;;
+		2) alg=$SHA1 ;;
+		3) alg=$SHA256 ;;
+		4) alg=$SHA512 ;;
+		*)
+			echo "Error! Invalid argument: $REPLY"
+			exit 1
+		;;
+	esac
+}
+
+function select_file {
+	read -p "Select file: "
+	selected_file=$REPLY
+}
+
+function script_help {
+	echo "  Hash commands:"
+	echo ""
+	echo "  gen    =  Generate a hash"
+	echo "  check  =  Check a hash"
+}
+
+if [[ $# -lt 1 ]]; then
+	script_help
+	exit 0
+fi
+
+if [[ $# -gt 1 ]]; then
+	echo "Error! Invalid number of arguments: $#"
+	exit 1
+fi
+
+main $1
