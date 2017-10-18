@@ -1,0 +1,24 @@
+#!/bin/bash
+# My SVN script, some useful svn shortcuts
+
+if [[ $# -lt 2 ]]; then
+	echo "Incorrect number of arguments"
+	exit 1
+fi
+
+cmd=$1
+file=$2
+
+if [[ $cmd != "add" ]] && [[ $cmd != "rm" ]]; then
+	echo "Wrong"
+	exit 1
+fi
+
+parsed_file=$(echo $file | sed 's/^\? */"/g; s/$/"/g')
+
+echo $parsed_file
+
+case $cmd in
+	"add") svn add $parsed_file ;;
+	"rm") svn rm $parsed_file ;;
+esac

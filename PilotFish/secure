@@ -1,0 +1,23 @@
+#!/bin/bash
+# A script to automate encrypting/decrypting secure messages using GPG2
+
+
+
+
+
+
+if [[ $# -lt 3 ]]; then
+    echo "Invalid number of arguments. Need -e or -d flag and an input file and an output file."
+    exit 1
+fi
+
+case $1 in
+    -e) gpg2 --out $3 --recipient "Craig Miller" --encrypt $2 ;;
+    -d)
+        read -p "Enter passphrase: "
+        gpg2 --out $3 --passphrase "$REPLY" --decrypt $2 ;;
+    *)
+        echo "Error! Invalid option"
+        exit 1
+    ;;
+esac

@@ -84,14 +84,16 @@ if ! $CLEAN ; then
 		name="$REPLY"
 	fi
 
-	### TODO ensure that there isn't a trailing - when no name is set
-
 	echo $BUILD_FILE
 	echo $ANT_TARGET
 
-	# exit 1 ## TODO delete this
-
-	ant -f "$BUILD_FILE" "$ANT_TARGET" -Dinstall4J.jarLoc="$install4J_jarLoc"
+	if [ $BUILD_FILE == $BUILD_NEW_MAIN_GIT ]; then
+		commit=$(git log --oneline -n 1 | awk '{print $1}')
+		ant -f "$BUILD_FILE" "$ANT_TARGET" -Dinstall4J.jarLoc="$install4J_jarLoc" -Dgit_commit=$commit
+	else
+		ant -f "$BUILD_FILE" "$ANT_TARGET" -Dinstall4J.jarLoc="$install4J_jarLoc"
+	fi
+	
 	echo "Copying application components to output directory, please wait..."
 	apppath=""
 	case "$ANT_TARGET" in
