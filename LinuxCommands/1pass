@@ -3,7 +3,8 @@
 
 function main {
 	case $1 in
-		start) wine "C:\Program Files (x86)\1Password 4\1Password.exe" ;;
+		app) wine "C:\Program Files (x86)\1Password 4\1Password.exe" & ;;
+		agent) wine "C:\Program Files (x86)\1Password 4\Agile1pAgent.exe" & ;;
 		*)
 			echo "Error! Invalid argument"
 			exit 1
@@ -14,7 +15,8 @@ function main {
 function script_help {
 	echo "  1Password Commands:"
 	echo ""
-	echo "  start  =  Run the main 1Password.exe application."
+	echo "  app    =  Run the main 1Password.exe application."
+	echo "  agent  =  Run the 1Password browser helper agent."
 }
 
 if [[ $# -lt 1 ]]; then
