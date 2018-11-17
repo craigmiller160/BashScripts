@@ -10,30 +10,41 @@
 ##########################
 # Platform Dependent Variable
 # -Dinstall4J.jarLoc
-install4J_jarLoc="/Applications/install4j 5/bin/ant.jar"
 ##########################
+
+INSTALL4J_5="/Applications/install4j 5/bin/ant.jar"
+INSTALL4J_7="/Applications/install4j.app/Contents/Resources/app/bin/ant.jar"
 
 BUILD_NEW_MAIN=resources/build/build_new_main.xml
 BUILD_NEW_MAIN_GIT=resources/build/build_new_main_git.xml
 BUILD_REGRESSION=resources/build/build_regression.xml
-EI_CONSOLE="eiConsole.buildRelease"
+EI_CONSOLE="eiConsole.buildAll"
 EI_CONSOLE_W_REVISION="eiConsole.buildAll.with.revision"
 EIP_WAR="eip.war.buildAll"
 EIC_BUNDLE="eicBundle.buildRelease"
 EIC_BUNDLE_W_REVISION="eicBundle.buildRelease.with.revision"
 REGRESSION_TARGET="package.solo"
 CLEAN=false
+COPY=false
 START_DIR=$(pwd)
 
-echo "Build PilotFish Application"
-echo ""
+
+if [[ $1 == "-n" ]]; then
+	echo "Using Install4J 7"
+	install4J_jarLoc="$INSTALL4J_7"
+else
+	echo "Using Install4J 5"
+	install4J_jarLoc="$INSTALL4J_5"
+fi
+
 echo "Select the type of build to run:"
-echo "  1) eiConsole (installer)"
-echo "  2) eiPlatform (war)"
-echo "  3) eiConsole + eiPlatform (installer)"
-echo "  4) Regression Components (solo)"
-echo "  5) eiConsole + eiPlatform (installer) + Regression"
-echo "  6) Clean (remove files created by installation)"
+echo "  1) eiConsole w/Revision (installer)"
+echo "  2) eiConsole All (installer)"
+echo "  3) eiPlatform (war)"
+echo "  4) eiConsole + eiPlatform (installer)"
+echo "  5) Regression Components (solo)"
+echo "  6) eiConsole + eiPlatform (installer) + Regression"
+echo "  7) Clean (remove files created by installation)"
 echo ""
 
 read -p "Choice: "
@@ -43,22 +54,26 @@ case "$REPLY" in
 		BUILD_FILE="$BUILD_NEW_MAIN_GIT"
 	;;
 	2)
+		ANT_TARGET="$EI_CONSOLE"
+		BUILD_FILE="$BUILD_NEW_MAIN"
+	;;
+	3)
 		ANT_TARGET="$EIP_WAR"
 		BUILD_FILE="$BUILD_NEW_MAIN"
 	;;
-	3) 
+	4) 
 		ANT_TARGET="$EIC_BUNDLE_W_REVISION"
 		BUILD_FILE="$BUILD_NEW_MAIN_GIT"
 	;;
-	4)
+	5)
 		ANT_TARGET="$REGRESSION_TARGET"
 		BUILD_FILE="$BUILD_REGRESSION"
 	;;
-	5)
+	6)
 		ANT_TARGET="$EIC_BUNDLE"
 		BUILD_FILE="$BUILD_NEW_MAIN"
 	;;
-	6) CLEAN=true ;;
+	7) CLEAN=true ;;
 	*) 
 		echo "Error! Invalid input"
 		exit 1
@@ -97,7 +112,7 @@ if ! $CLEAN ; then
 	echo "Copying application components to output directory, please wait..."
 	apppath=""
 	case "$ANT_TARGET" in
-		"$EI_CONSOLE_W_REVISION")
+		"$EI_CONSOLE_W_REVISION" | "$EI_CONSOLE")
 			rm -rf $HOME/xcs-app/eiConsole* 1>/dev/null 2>/dev/null
 			apppath="$HOME/xcs-app/eiConsole"
 			if [[ "$name" != "" ]]; then
@@ -136,6 +151,23 @@ if ! $CLEAN ; then
 	esac
 	echo "Build complete. Application is located at $apppath"
 
+	echo "$ANT_TARGET"
+
+	if [ "$ANT_TARGET" == "$EIC_BUNDLE_W_REVISION" ] || [ "$ANT_TARGET" == "$EIC_BUNDLE" ]; then
+		echo ""
+		echo "Do you want to copy the build files to pfcommon/XCS?"
+		read -p "Copy? (y/n): "
+		case $REPLY in
+			y|Y) COPY=true ;;
+			n|N) COPY=false ;;
+			*)
+				echo "Error! Invalid input"
+			;;
+		esac
+	else
+		echo "Failed to pass ant target test"
+	fi
+
 	echo ""
 	echo "Do you want to clean your project directory of all build files?"
 	read -p "Clean? (y/n): "
@@ -146,6 +178,12 @@ if ! $CLEAN ; then
 			echo "Error! Invalid input"
 		;;
 	esac
+fi
+
+if $COPY ; then
+	echo "Copying build files to pfcommon/XCS"
+	sudo rm -rf /usr/local/pfcommon/resources/releases/eiPlatform-Windows/*
+	sudo cp -R resources/releases/eiPlatform-Windows/* /usr/local/pfcommon/XCS/resources/releases/eiPlatform-Windows
 fi
 
 if $CLEAN ; then
@@ -185,6 +223,8 @@ if $CLEAN ; then
 	rm resources/releases/eiPlatform-Windows/staging/startRegressionRemote.sh 1>/dev/null 2>/dev/null
 	rm resources/releases/eiPlatform-Windows/staging/startRegressionRemote.cmd 1>/dev/null 2>/dev/null
 	rm resources/releases/eiPlatform-Windows/staging/web-app_2_3.dtd 1>/dev/null 2>/dev/null
+	rm resources/releases/eiPlatform-Windows/staging/logConfig.xml 1>/dev/null 2>/dev/null
+	rm resources/releases/eiPlatform-Windows/staging/ognlSettings.xml 1>/dev/null 2>/dev/null
 
 	# Remove eip-lite files & directories
 	rm -rf resources/releases/eip-lite-server/build/ 1>/dev/null 2>/dev/null
